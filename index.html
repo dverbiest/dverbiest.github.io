@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web App</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Web App</h1>
+
+    <!-- Form to add new data -->
+    <form id="dataForm">
+        <label for="data">Enter Data:</label>
+        <input type="text" id="data" name="data">
+        <br>
+        <input type="button" value="Add Row" onclick="addRow()">
+    </form>
+
+    <!-- Display data in a table -->
+    <table id="dataTable">
+        <tr>
+            <th>Data</th>
+        </tr>
+    </table>
+
+    <script src="script.js"></script>
+</body>
+</html>
