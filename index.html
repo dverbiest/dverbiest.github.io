@@ -20,9 +20,9 @@
     }
     td {
       background-color: #073763;
-      line-height: 0.9;
       border: solid white;
       border-width: 1px 0px 1px 0px;
+      line-height: 0.9;
       vertical-align: top;
       padding: 0px;
       min-width: 120px;
@@ -39,7 +39,6 @@
       color: white;
     }
     td div {
-      pointer-events: none;
       line-height: normal;
       padding: 4px;
     }
@@ -66,7 +65,17 @@
 <body>
   <table>
     <thead>
-      <tr><td><div>File</div></td><td><div>Test Case</div></td><td colspan="999"><div>Steps</div></td></tr>
+      <tr>
+        <td>
+          <div>File</div>
+        </td>
+        <td>
+          <div>Test Case</div>
+        </td>
+        <td colspan="999">
+          <div>Steps</div>
+        </td>
+      </tr>
     </thead>
     <tbody id="dataTable"></tbody>
   </table>
