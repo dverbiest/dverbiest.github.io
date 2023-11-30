@@ -1,17 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
-  fetchDataFromGoogleSheet();
+  fetchDataFromServer();
 });
 
-function fetchDataFromGoogleSheet() {
-  const sheetId = '';
-  const apiKey = '';
-  const sheetName = 'Data';
-
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}?key=${apiKey}`;
-
-  fetch(url)
+function fetchDataFromServer() {
+  fetch('/data')
     .then(response => response.json())
-    .then(data => displayData(data.values))
+    .then(data => displayData(data))
     .catch(error => console.error('Error fetching data:', error));
 }
 
