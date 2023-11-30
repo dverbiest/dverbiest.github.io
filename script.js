@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function fetchDataFromGoogleSheet() {
-  const sheetId = '1HqrmECZN0BhX0lsV2B2vSWmYO6nuhglHXubjo-tgikE';
+  const sheetId = '';
   const apiKey = '';
   const sheetName = 'Data';
 
@@ -101,3 +101,52 @@ function handleHover(event, isMouseOver) {
 
 document.addEventListener('mouseover', (event) => handleHover(event, true));
 document.addEventListener('mouseout', (event) => handleHover(event, false));
+
+// Function to show the popup
+function showPopup(rowData) {
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.classList.add('overlay');
+  document.body.appendChild(overlay);
+
+  // Create popup
+  const popup = document.createElement('div');
+  popup.classList.add('popup');
+
+  // Create close button
+  const closeButton = document.createElement('button');
+  closeButton.textContent = 'Close';
+  closeButton.addEventListener('click', () => {
+    // Remove both overlay and popup when close button is clicked
+    document.body.removeChild(overlay);
+    document.body.removeChild(popup);
+  });
+
+  // Create list for steps
+  const stepsList = document.createElement('ul');
+  rowData.forEach((step) => {
+    const stepItem = document.createElement('li');
+    stepItem.textContent = step;
+    stepsList.appendChild(stepItem);
+  });
+
+  // Append elements to popup
+  popup.appendChild(stepsList);
+  popup.appendChild(closeButton);
+
+  // Append popup to the body
+  document.body.appendChild(popup);
+}
+
+// Usage example
+document.addEventListener('click', function (event) {
+  const clickedCell = event.target.closest('td');
+
+  // Check if the clicked element is in the first or second column
+  if (clickedCell.cellIndex <= 1) {
+    // Get the row data
+    const rowData = Array.from(clickedCell.parentNode.cells).map(cell => cell.querySelector('div').textContent);
+    // Show the popup with the row data
+    showPopup(rowData);
+  }
+});
