@@ -105,6 +105,11 @@ document.addEventListener('mouseout', (event) => handleHover(event, false));
 function showPopup(rowData) {
   // Create overlay
   const overlay = document.createElement('div');
+  overlay.addEventListener('click', () => {
+    // Remove both overlay and popup when the overlay is clicked
+    document.body.removeChild(overlay);
+    document.body.removeChild(popup);
+  });
   overlay.classList.add('overlay');
   document.body.appendChild(overlay);
 

@@ -12,6 +12,8 @@ table {
 thead td {
   font-weight: bold;
   cursor: default;
+  line-height: normal;
+  padding: 4px;
 }
 
 td {

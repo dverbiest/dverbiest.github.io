@@ -1,4 +1,4 @@
-import express, { static as pub } from 'express';
+import express, { static as serveStatic } from 'express';
 import { config } from 'dotenv';
 import fetch from 'node-fetch';
 
@@ -7,7 +7,7 @@ config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(pub('public')); // Assuming your HTML and client-side JS are in the 'public' folder
+app.use(serveStatic('public'));
 
 app.get('/data', async (req, res) => {
   try {
