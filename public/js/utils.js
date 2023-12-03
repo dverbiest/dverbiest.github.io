@@ -1,23 +1,29 @@
-document.addEventListener('DOMContentLoaded', function () {
-  fetchDataFromServer();
-});
-
-function fetchDataFromServer() {
-  fetch('/data')
+export function fetchDataFromServer() {
+  fetch('/readMainTable')
     .then(response => {
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(`HTTP error! Status: ${response.status}`);
-      }
       return response.json();
     })
     .then(data => displayData(data))
     .catch(error => console.error('Error fetching data:', error));
 }
 
-function displayData(data) {
+function updateServerWithData(updatedData) {
+  fetch('/writeMainTable', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updatedData),
+  }).then(response => {
+    if (!response.ok)
+      throw new Error(`HTTP error! Status: ${response.status}`);
+  }).catch(error => console.error('Error updating data on the server:', error));
+}
+
+export function displayData(data) {
   const table = document.getElementById('dataTable');
 
-  data.forEach(function (row) {
+  data.forEach(function (row, rowIndex) {
     const newRow = table.insertRow(table.rows.length);
 
     row.forEach(function (cell, colIndex) {
@@ -42,11 +48,13 @@ function displayData(data) {
         });
 
         // Set the selected value based on the cell data
-        const selectedValue = cellParts[0].trim();
-        dropdown.value = selectedValue;
+        dropdown.value = cellParts[0].trim();
 
-        // Add event listener to apply styles on change
+        // Add event listener to save and apply styles on change
         dropdown.addEventListener('change', function () {
+          // Update the data
+          data[rowIndex][colIndex] = dropdown.value + '\n' + cellParts[1];
+          updateServerWithData(data);
           applyStyles(dropdown);
         });
 
@@ -60,6 +68,10 @@ function displayData(data) {
         newCell.appendChild(div);
       }
     });
+    // Add a '+' cell at the end of each row, to enable adding extra steps
+    const addCell = newRow.insertCell();
+    addCell.className = 'add'
+    addCell.innerHTML = '<div>+</div>';
   });
 }
 
@@ -68,7 +80,7 @@ function applyStyles(select) {
   select.closest('td').className = selectedValue;
 }
 
-function handleHover(event, isMouseOver) {
+export function handleHover(event, isMouseOver) {
   const hoverElement = event.target;
 
   // Function to find the closest TD element
@@ -77,39 +89,50 @@ function handleHover(event, isMouseOver) {
     return element.tagName === 'TD' ? element : findClosestTD(element.parentElement);
   }
 
-  const closestTD = findClosestTD(hoverElement);
+  const targetTD = findClosestTD(hoverElement);
 
-  if (closestTD) {
-    const columnIndex = closestTD.cellIndex;
+  if (targetTD) {
+    const columnIndex = targetTD.cellIndex;
 
     if (columnIndex === 0 || columnIndex === 1) {
-      const row = closestTD.closest('tr');
+      const row = targetTD.closest('tr');
       if (row) {
         const tdElements = Array.from(row.querySelectorAll('td'));
         tdElements.forEach((td) => td.classList.toggle('hover', isMouseOver));
       }
     } else {
-      const textContent = closestTD.textContent.trim();
+      const textContent = targetTD.textContent.trim();
       const tdElements = Array.from(document.querySelectorAll('td')).filter(
         (td) => td.textContent.trim() === textContent
       );
-      tdElements.forEach((td) => td.classList.toggle('hover', isMouseOver));
+      if (textContent === '+')
+        targetTD.classList.toggle('hover', isMouseOver)
+      else
+        tdElements.forEach((td) => td.classList.toggle('hover', isMouseOver));
     }
   }
 }
 
-document.addEventListener('mouseover', (event) => handleHover(event, true));
-document.addEventListener('mouseout', (event) => handleHover(event, false));
-
-// Function to show the popup
-function showPopup(rowData) {
-  // Create overlay
-  const overlay = document.createElement('div');
-  overlay.addEventListener('click', () => {
-    // Remove both overlay and popup when the overlay is clicked
+export function showPopup(dataArray) {
+  const removeOverlayAndPopup = () => {
     document.body.removeChild(overlay);
     document.body.removeChild(popup);
-  });
+  }
+  // Close popup when Escape is pressed
+  document.onkeydown = (evt) => {
+    evt = evt || window.event;
+    var isEscape = false;
+    if ("key" in evt)
+      isEscape = (evt.key === "Escape" || evt.key === "Esc");
+    else
+      isEscape = (evt.keyCode === 27);
+    if (isEscape && overlay.checkVisibility()) {
+      removeOverlayAndPopup();
+    }
+  }
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.addEventListener('click', () => removeOverlayAndPopup());
   overlay.classList.add('overlay');
   document.body.appendChild(overlay);
 
@@ -117,40 +140,40 @@ function showPopup(rowData) {
   const popup = document.createElement('div');
   popup.classList.add('popup');
 
-  // Create close button
-  const closeButton = document.createElement('button');
-  closeButton.textContent = 'Close';
-  closeButton.addEventListener('click', () => {
-    // Remove both overlay and popup when close button is clicked
-    document.body.removeChild(overlay);
-    document.body.removeChild(popup);
-  });
+  // Create save button
+  const saveButton = document.createElement('button');
+  saveButton.textContent = 'Save changes';
+  saveButton.addEventListener('click', () => removeOverlayAndPopup());
 
+  // Create cancel button
+  const cancelButton = document.createElement('button');
+  cancelButton.textContent = 'Cancel';
+  cancelButton.addEventListener('click', () => removeOverlayAndPopup());
   // Create list for steps
   const stepsList = document.createElement('ul');
-  rowData.forEach((step) => {
+  dataArray.forEach((step) => {
     const stepItem = document.createElement('li');
-    stepItem.textContent = step;
+    stepItem.innerHTML = step;
     stepsList.appendChild(stepItem);
   });
 
   // Append elements to popup
   popup.appendChild(stepsList);
-  popup.appendChild(closeButton);
+  popup.appendChild(cancelButton);
+  popup.appendChild(saveButton);
 
   // Append popup to the body
   document.body.appendChild(popup);
-}
 
-// Usage example
-document.addEventListener('click', function (event) {
-  const clickedCell = event.target.closest('td');
-
-  // Check if the clicked element is in the first or second column
-  if (clickedCell.cellIndex <= 1) {
-    // Get the row data
-    const rowData = Array.from(clickedCell.parentNode.cells).map(cell => cell.querySelector('div').textContent);
-    // Show the popup with the row data
-    showPopup(rowData);
+  // Set height of the title element
+  const title = popup.querySelector('textarea');
+  const setTitleSize = () => {
+    title.style.height = title.scrollHeight - 5 + 'px';
+    if (title.clientHeight < title.scrollHeight)
+      title.style.height = title.scrollHeight + 2 + 'px';
   }
-});
+  if (title) {
+    new ResizeObserver(setTitleSize).observe(title);
+    title.addEventListener('input', () => setTitleSize())
+  }
+}

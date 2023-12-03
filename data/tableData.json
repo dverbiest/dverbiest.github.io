@@ -1,0 +1,58 @@
+[
+  [
+    "1-login-customer",
+    "TC1 - Customer login by form",
+    "Portal\nLogin as Customer"
+  ],
+  [
+    "2-navigation-customer",
+    "TC2 - Navigate to [main pages]",
+    "API\nLogin as Customer",
+    "Portal\nClick all main navigation buttons, verify header and path"
+  ],
+  [
+    "3-profile-customer",
+    "TC3.0 - Rainy",
+    "API\nLogin as Customer",
+    "Portal\nRainy test"
+  ],
+  [
+    "",
+    "TC3.1 - Happy",
+    "API\nLogin as Customer",
+    "Portal\nHappy test"
+  ],
+  [
+    "4-buy-customer",
+    "TC4 - Create a quote with Internet Peering",
+    "API\nLogin as Customer",
+    "Portal\nAdd a connection with internet peering to the cart",
+    "Salesforce\nAdd a 10% discount",
+    "Portal\nPlace the order",
+    "Salesforce\nVerify provisioning",
+    "API\nRemove connection"
+  ],
+  [
+    "6-service-modifications-customer",
+    "TC6",
+    "API\nLogin as Customer",
+    "API\nAdd a connection with internet peering to the cart",
+    "API\nPlace the order",
+    "Portal\nHappy test",
+    "API\nRemove connection"
+  ],
+  [
+    "1-login-reseller",
+    "TC1 - Reseller login by form",
+    "Portal\nLogin as Reseller"
+  ],
+  [
+    "5-buy-reseller",
+    "TC5",
+    "API\nLogin as Reseller",
+    "Portal\nAdd an access connection",
+    "API\nPlace the order",
+    "Salesforce\nVerify provisioning",
+    "API\nRemove connection"
+  ]
+]
