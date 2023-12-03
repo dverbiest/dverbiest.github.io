@@ -8,7 +8,7 @@ document.addEventListener('click', (event) => {
   if (targetCell?.cellIndex <= 1) {
     // Cell in the first or second column: Display the row data in a popup
     showPopup(Array.from(targetCell.parentNode.cells).map(cell => cell.querySelector('div').textContent));
-  } else if (targetCell.querySelector('select') && event.target.tagName !== 'SELECT') {
+  } else if (targetCell?.querySelector('select') && event.target.tagName !== 'SELECT') {
     // Cell after the second column: Display the details of the current cell
     showPopup([
       targetCell.querySelector('select').outerHTML,
