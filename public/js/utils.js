@@ -113,7 +113,7 @@ export function handleHover(event, isMouseOver) {
   }
 }
 
-export function showPopup(dataArray) {
+export function showPopup(dataArray, type) {
   const removeOverlayAndPopup = () => {
     document.body.removeChild(overlay);
     document.body.removeChild(popup);
@@ -149,21 +149,31 @@ export function showPopup(dataArray) {
   const cancelButton = document.createElement('button');
   cancelButton.textContent = 'Cancel';
   cancelButton.addEventListener('click', () => removeOverlayAndPopup());
-  // Create list for steps
-  const stepsList = document.createElement('ul');
+
+  // Create list for data
+  const dataList = document.createElement('ul');
   dataArray.forEach((step) => {
-    const stepItem = document.createElement('li');
-    stepItem.innerHTML = step;
-    stepsList.appendChild(stepItem);
+    const item = document.createElement('li');
+    item.innerHTML = step;
+    dataList.appendChild(item);
   });
 
   // Append elements to popup
-  popup.appendChild(stepsList);
+  popup.appendChild(dataList);
   popup.appendChild(cancelButton);
   popup.appendChild(saveButton);
 
   // Append popup to the body
   document.body.appendChild(popup);
+
+  // Set type if applicable
+  const dropdown = popup.querySelector('select');
+  if (type) {
+    dropdown.value = type;
+    popup.classList.add(type.toLowerCase());
+    // Add event listener to apply styles on change
+    dropdown.addEventListener('change', () => popup.classList.value = `popup ${dropdown.value.toLowerCase()}`);
+  }
 
   // Set height of the title element
   const title = popup.querySelector('textarea');
