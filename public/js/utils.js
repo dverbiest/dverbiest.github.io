@@ -66,6 +66,21 @@ export function displayData(data) {
         const div = document.createElement('div');
         div.textContent = cellParts[1] || ''; // Leave it empty if there is no second part
         newCell.appendChild(div);
+
+        // Add a checkbox
+        const checkboxDiv = document.createElement('div');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        newCell.appendChild(checkboxDiv);
+        checkboxDiv.appendChild(checkbox);
+        // Add event listener to apply styles on change
+        checkbox.addEventListener('change', function () {
+          if (checkbox.checked) {
+            checkbox.setAttribute('checked', '');
+          } else {
+            checkbox.removeAttribute('checked');
+          }
+        });
       }
     });
     // Add a '+' cell at the end of each row, to enable adding extra steps
@@ -164,7 +179,14 @@ export function showPopup(dataArray, type) {
   popup.appendChild(saveButton);
 
   // Append popup to the body
+  const placePopup = () => {
+    console.log(window.scrollY, window.scrollX);
+    popup.style.top = Math.floor(window.scrollY) + 50 + 'px';
+    popup.style.left = `calc(${Math.floor(window.scrollX)}px + 50%)`;
+  }
+  placePopup();
   document.body.appendChild(popup);
+  window.addEventListener('resize', () => placePopup());
 
   // Set type if applicable
   const dropdown = popup.querySelector('select');
@@ -175,7 +197,7 @@ export function showPopup(dataArray, type) {
     dropdown.addEventListener('change', () => popup.classList.value = `popup ${dropdown.value.toLowerCase()}`);
   }
 
-  // Set height of the title element
+  // Set height of the title element + focus
   const title = popup.querySelector('textarea');
   const setTitleSize = () => {
     title.style.height = title.scrollHeight - 5 + 'px';
@@ -184,6 +206,7 @@ export function showPopup(dataArray, type) {
   }
   if (title) {
     new ResizeObserver(setTitleSize).observe(title);
-    title.addEventListener('input', () => setTitleSize())
+    title.addEventListener('input', () => setTitleSize());
+    title.select();
   }
 }
